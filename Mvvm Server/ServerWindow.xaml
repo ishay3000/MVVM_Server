@@ -1,0 +1,22 @@
+﻿<Window x:Class="serv_view_model.ServerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vmserver="clr-namespace:Mvvm_Server"
+		mc:Ignorable="d"
+        Title="ServerWindow" Height="350" Width="525">
+
+	<!--<Window.DataContext>
+		<vmserver:ServerVM />
+	</Window.DataContext>-->
+	<Grid>
+		<Button x:Name="btnStartServer" Command="{Binding Path=BtnStartServer}" Content="Start" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="214,152,0,0"/>
+		<Label x:Name="lblState"  HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="32" Margin="181,99,0,0" VerticalAlignment="Top" Width="158">
+			<Label.Content>
+				<AccessText TextWrapping="WrapWithOverflow" Text="{Binding Path=State}"/>
+			</Label.Content>
+		</Label>
+
+	</Grid>
+</Window>
