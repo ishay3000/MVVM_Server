@@ -25,7 +25,7 @@ namespace Mvvm_Server.Models
 
 		#region members
 		private TcpListener mServer;
-		private const int PORT = 8089;
+		private const int PORT = 2378;
 		private const string IP = "127.0.0.1";
 		private string mState = "";
 
@@ -76,23 +76,21 @@ namespace Mvvm_Server.Models
 				// Enter the listening loop. 
 				while (true)
 				{
-					State = "Waiting for a connection...";
+					//State = "Waiting for a connection...";
 					// wait for a client
 					TcpClient client = mServer.AcceptTcpClient();
 
-					State = "Client Connected";
+					//State = "Client Connected";
 
 					// client connected
-					mState =  await GetClientStateAsync(client);
-					State = mState;
-
-					// Shutdown and end connection
-					client.Close();
+					var res = await GetClientStateAsync(client);
+					Console.WriteLine("String: " + res.ToString());
+					State = res;
 				}
 			}
 			catch (SocketException e)
 			{
-				Debug.WriteLine("SocketException: {0}", e);
+				Console.WriteLine("SocketException: {0}", e.Message);
 			}
 			finally
 			{
@@ -108,19 +106,27 @@ namespace Mvvm_Server.Models
 		/// <returns>the state of the client</returns>
 		private async Task<string> GetClientStateAsync(TcpClient client)
 		{
-			State = "Reading State";
-			NetworkStream networkStream = client.GetStream();
-			int bytes_read = -1;
-			byte[] buffer = new byte[1024];
-			string stateReceived = "";
-			//MemoryStream memoryStream = new MemoryStream();
-
-			while ((bytes_read = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+			return await Task.Run(async () =>
 			{
-				stateReceived += buffer.GetStringValue();
-			}
-			State = "Finished reading state";
-			return stateReceived;
+				Console.WriteLine("Reading");
+				//State = "Reading...";
+				NetworkStream networkStream = client.GetStream();
+				int bytes_read = 0;
+				int bytes_total_read = 0;
+				byte[] buffer = new byte[1024];
+				string stateReceived = "";
+				//MemoryStream memoryStream = new MemoryStream();
+
+				while ((bytes_read = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+				{
+					stateReceived += buffer.GetStringValue();
+					bytes_total_read += bytes_read;
+					Console.WriteLine("bytes read: " + bytes_read);
+				}
+				//State = "Finished reading state";
+				Console.WriteLine("State: " + stateReceived);
+				return stateReceived.Substring(0, bytes_total_read);
+			});
 		}
 	}
 }
