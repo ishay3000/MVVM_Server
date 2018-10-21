@@ -14,7 +14,7 @@ namespace Mvvm_Server.ViewModels
 	class ServerViewModel : INotifyPropertyChanged
 	{
 		#region members
-		private Server mServer;
+		public Server mServer;
 		private Thread mServerThread;
 		private ICommand mBtnStartServer;
 		public string mState = "Null";
@@ -26,7 +26,7 @@ namespace Mvvm_Server.ViewModels
 		{
 			mServer = new Server();
 			mServerThread = new Thread(async () => await mServer.RunAsync());
-			mBtnStartServer = new RelayCommand(() => mServerThread.Start(), null);
+			mBtnStartServer = new RelayCommand(() => mServerThread.Start(), BtnStartCanExecute);
 			mServer.PropertyChanged += MServer_PropertyChanged;
 		}
 
@@ -60,6 +60,11 @@ namespace Mvvm_Server.ViewModels
 					RaisePropertyChanged("State");
 				}
 			}
+		}
+
+		public bool BtnStartCanExecute()
+		{
+			return mServerThread.IsAlive == false;
 		}
 
 		public ICommand BtnStartServer
